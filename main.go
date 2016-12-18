@@ -9,8 +9,9 @@ import (
 )
 
 func main() {
-	runner := commands.NewCommandRunner()
-	printer := output.NewTextPrinter()
+	printer := output.NewTextPrinter("0.0.1")
+
+	runner := commands.NewCommandRunner(printer)
 
 	app := app.NewApp(runner, printer)
 	app.Run(os.Args[1:])
