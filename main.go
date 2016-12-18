@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"os"
+
+	"github.com/ismacaulay/fiz/app"
+	"github.com/ismacaulay/fiz/commands"
+	"github.com/ismacaulay/fiz/output"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	runner := commands.NewCommandRunner()
+	printer := output.NewTextPrinter()
+
+	app := app.NewApp(runner, printer)
+	app.Run(os.Args[1:])
 }
