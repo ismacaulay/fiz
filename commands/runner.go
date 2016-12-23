@@ -12,16 +12,18 @@ type Runner interface {
 
 type CommandRunner struct {
 	printer output.Printer
+	factory Factory
 }
 
-func NewCommandRunner(printer output.Printer) *CommandRunner {
-	return &CommandRunner{printer}
+func NewCommandRunner(printer output.Printer, factory Factory) *CommandRunner {
+	return &CommandRunner{printer, factory}
 }
 
 func (r *CommandRunner) Run(command string) {
 	switch command {
 	case "list", "-l":
-		fmt.Println("running", command)
+		cmd := r.factory.Create(List)
+		cmd.Run()
 	case "help", "-h", "--help":
 		r.printer.Help()
 	case "version", "--version":

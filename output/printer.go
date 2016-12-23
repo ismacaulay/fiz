@@ -29,7 +29,7 @@ Usage:
 	fiz <command>
 
 Commands:
-	list, -l			list all wizards
+	list, -l		list all wizards
 	version, --version	print the version
 	help, -h, --help	print this help message
 `
