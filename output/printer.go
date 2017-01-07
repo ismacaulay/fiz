@@ -19,7 +19,7 @@ func NewTextPrinter(version string) *TextPrinter {
 }
 
 func (p *TextPrinter) Help() {
-	helpText := `Name: 
+	helpText := `Name:
 	fiz - a file wizard
 
 Version:
@@ -30,11 +30,13 @@ Usage:
 
 Commands:
 	list, -l		list all wizards
+	<wizard>		run wizard
+	<group> <wizard>	run wizard in group
 	version, --version	print the version
 	help, -h, --help	print this help message
 `
 
-	fmt.Println(helpText)
+	p.Message(helpText)
 }
 
 func (p *TextPrinter) Version() {
@@ -42,5 +44,5 @@ func (p *TextPrinter) Version() {
 }
 
 func (p *TextPrinter) Message(msg string) {
-	fmt.Println(msg)
+	fmt.Print(msg)
 }
