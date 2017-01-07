@@ -22,7 +22,11 @@ func (c *ListCommand) Run() error {
 
 	msg := `Available Wizards:`
 
-	for category, names := range wizards {
+	if len(wizards) == 0 {
+		msg = msg + `
+	No wizards found`
+	} else {
+		for category, names := range wizards {
 		wizardsString := ""
 		for _, name := range names {
 			wizardsString += `
@@ -32,6 +36,8 @@ func (c *ListCommand) Run() error {
 		msg = msg + `
 	` + category + ":" + wizardsString
 	}
+	}
+
 	c.printer.Message(msg)
 	return nil
 }
