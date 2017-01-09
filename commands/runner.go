@@ -1,13 +1,11 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/ismacaulay/fiz/output"
 )
 
 type Runner interface {
-	Run(command string)
+	Run(commands []string)
 }
 
 type CommandRunner struct {
@@ -19,17 +17,26 @@ func NewCommandRunner(printer output.Printer, factory Factory) *CommandRunner {
 	return &CommandRunner{printer, factory}
 }
 
-func (r *CommandRunner) Run(command string) {
+func (r *CommandRunner) Run(commands []string) {
+	if len(commands) == 0 {
+		r.printer.Help()
+		return
+	}
+
+	command := commands[0]
 	switch command {
 	case "list", "-l":
-		cmd := r.factory.Create(List)
+		cmd := r.factory.CreateListCmd()
 		cmd.Run()
 	case "help", "-h", "--help":
 		r.printer.Help()
 	case "version", "--version":
 		r.printer.Version()
 	default:
-		r.printer.Message(fmt.Sprint("Invalid command", command))
-		r.printer.Help()
+		cmd := r.factory.CreateWizardCmd(commands)
+		if err := cmd.Run(); err != nil {
+			r.printer.Error(err)
+			r.printer.Commands()
+		}
 	}
 }

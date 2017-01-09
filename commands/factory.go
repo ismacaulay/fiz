@@ -5,29 +5,25 @@ import (
 	"github.com/ismacaulay/fiz/wizards"
 )
 
-type Cmd int
-
-const (
-	List Cmd = iota
-)
-
 type Factory interface {
-	Create(t Cmd) Command
+	CreateListCmd() Command
+	CreateWizardCmd(commands []string) Command;
 }
 
 type CmdFactory struct {
 	provider wizards.Provider
+	loader wizards.Loader
 	printer  output.Printer
 }
 
-func NewCmdFactory(provider wizards.Provider, printer output.Printer) *CmdFactory {
-	return &CmdFactory{provider, printer}
+func NewCmdFactory(provider wizards.Provider, loader wizards.Loader, printer output.Printer) *CmdFactory {
+	return &CmdFactory{provider, loader, printer}
 }
 
-func (f *CmdFactory) Create(t Cmd) Command {
-	switch t {
-	case List:
-		return NewListCommand(f.provider, f.printer)
-	}
-	return nil
+func (f *CmdFactory) CreateListCmd() Command {
+	return NewListCommand(f.provider, f.printer)
+}
+
+func (f *CmdFactory) CreateWizardCmd(commands []string) Command {
+	return NewWizardCommand(f.loader, commands)
 }

@@ -17,11 +17,14 @@ func main() {
 	directoryProvider := utils.NewDirectoryProvider()
 
 	wizardProvider := wizards.NewWizardProvider(filesystem, directoryProvider)
-	printer := output.NewTextPrinter(VERSION)
-	cmdFactory := commands.NewCmdFactory(wizardProvider, printer)
+	wizardLoader := wizards.NewWizardLoader(wizardProvider)
 
+	printer := output.NewTextPrinter(VERSION)
+
+	cmdFactory := commands.NewCmdFactory(wizardProvider, wizardLoader, printer)
 	runner := commands.NewCommandRunner(printer, cmdFactory)
 
-	app := app.NewApp(runner, printer)
+	app := app.NewApp(runner)
 	app.Run(os.Args[1:])
 }
+

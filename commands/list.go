@@ -6,7 +6,6 @@ import (
 
 	"text/template"
 	"bytes"
-	"log"
 )
 
 type ListCommand struct {
@@ -46,7 +45,7 @@ const (
 
 {{- define "print_wizards" -}}
 {{- range $index, $wizard := . }}
-        - {{ $wizard }}
+        - {{ $wizard.Name }}
 {{- end -}}
 {{- end -}}
 

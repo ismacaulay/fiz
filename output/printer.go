@@ -8,6 +8,8 @@ type Printer interface {
 	Help()
 	Version()
 	Message(msg string)
+	Error(err error)
+	Commands()
 }
 
 type TextPrinter struct {
@@ -28,15 +30,9 @@ Version:
 Usage:
 	fiz <command>
 
-Commands:
-	list, -l		list all wizards
-	<wizard>		run wizard
-	<group> <wizard>	run wizard in group
-	version, --version	print the version
-	help, -h, --help	print this help message
 `
-
 	p.Message(helpText)
+	p.Commands()
 }
 
 func (p *TextPrinter) Version() {
@@ -45,4 +41,19 @@ func (p *TextPrinter) Version() {
 
 func (p *TextPrinter) Message(msg string) {
 	fmt.Print(msg)
+}
+
+func (p *TextPrinter) Error(err error) {
+	fmt.Print(err)
+}
+
+func (p *TextPrinter) Commands() {
+	commands := `Commands:
+	list, -l		list all wizards
+	<wizard>		run wizard
+	<group> <wizard>	run wizard in group
+	version, --version	print the version
+	help, -h, --help	print this help message
+`
+	p.Message(commands)
 }
