@@ -6,12 +6,23 @@ A file wizard command line tool
 ```
 {
     "templates": [
-        "hello.cpp"
+        "hello.cpp",
+        "hello.h"
     ],
     "variables": [
         {
             "name": "ClassName",
             "type": "string"
+        },
+        {
+            "name": "CreateNamespace",
+            "type": "bool",
+            "default": false
+        },
+        {
+            "name": "Namespace",
+            "type": "string",
+            "condition": ["CreateNamespace"]
         }
     ]
 }
