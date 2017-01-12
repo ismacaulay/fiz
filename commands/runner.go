@@ -36,6 +36,7 @@ func (r *CommandRunner) Run(commands []string) {
 		cmd := r.factory.CreateWizardCmd(commands)
 		if err := cmd.Run(); err != nil {
 			r.printer.Error(err)
+			r.printer.Message("\n\n")
 			r.printer.Commands()
 		}
 	}

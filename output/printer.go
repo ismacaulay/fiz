@@ -44,7 +44,7 @@ func (p *TextPrinter) Message(msg string) {
 }
 
 func (p *TextPrinter) Error(err error) {
-	fmt.Print(err)
+	fmt.Print("Error: ", err)
 }
 
 func (p *TextPrinter) Commands() {

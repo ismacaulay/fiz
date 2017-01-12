@@ -1,22 +1,36 @@
 package wizards
 
 import (
-    "fmt"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 )
 
 type Wizard interface {
-    Run() error
+	Run() error
 }
 
 type RealWizard struct {
-    info WizardInfo
+	info WizardInfo
 }
 
 func NewWizard(info WizardInfo) *RealWizard {
-    return &RealWizard{info}
+	return &RealWizard{info}
 }
 
 func (w *RealWizard) Run() error {
-    fmt.Println("Running:", w.info.Path)
-    return nil
+	raw, err := ioutil.ReadFile(w.info.Path)
+	if err != nil {
+		return err
+	}
+
+	var wizardData WizardJson
+	err = json.Unmarshal(raw, &wizardData)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("I READ: ", wizardData)
+
+	return nil
 }
