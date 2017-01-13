@@ -10,10 +10,11 @@ type Loader interface {
 
 type WizardLoader struct {
 	provider Provider
+	factory  Factory
 }
 
-func NewWizardLoader(p Provider) *WizardLoader {
-	return &WizardLoader{p}
+func NewWizardLoader(p Provider, f Factory) *WizardLoader {
+	return &WizardLoader{p, f}
 }
 
 func (l *WizardLoader) Load(commands []string) (Wizard, error) {
@@ -40,7 +41,7 @@ func (l *WizardLoader) Load(commands []string) (Wizard, error) {
 		return nil, invalidCommandError(commands)
 	}
 
-	return NewWizard(info), nil
+	return l.factory.Create(info), nil
 }
 
 func invalidCommandError(commands []string) error {

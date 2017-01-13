@@ -16,8 +16,9 @@ func main() {
 	filesystem := utils.NewFileSystem()
 	directoryProvider := utils.NewDirectoryProvider()
 
+	wizardFactory := wizards.NewWizardFactory(filesystem)
 	wizardProvider := wizards.NewWizardProvider(filesystem, directoryProvider)
-	wizardLoader := wizards.NewWizardLoader(wizardProvider)
+	wizardLoader := wizards.NewWizardLoader(wizardProvider, wizardFactory)
 
 	printer := output.NewTextPrinter(VERSION)
 
@@ -27,4 +28,3 @@ func main() {
 	app := app.NewApp(runner)
 	app.Run(os.Args[1:])
 }
-
