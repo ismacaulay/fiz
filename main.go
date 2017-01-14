@@ -5,7 +5,7 @@ import (
 
 	"github.com/ismacaulay/fiz/app"
 	"github.com/ismacaulay/fiz/commands"
-	"github.com/ismacaulay/fiz/output"
+	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/utils"
 	"github.com/ismacaulay/fiz/wizards"
 )
@@ -16,11 +16,12 @@ func main() {
 	filesystem := utils.NewFileSystem()
 	directoryProvider := utils.NewDirectoryProvider()
 
-	wizardFactory := wizards.NewWizardFactory(filesystem)
+	printer := io.NewTextPrinter(VERSION)
+	input := io.NewCliInput()
+
+	wizardFactory := wizards.NewWizardFactory(filesystem, input, printer)
 	wizardProvider := wizards.NewWizardProvider(filesystem, directoryProvider)
 	wizardLoader := wizards.NewWizardLoader(wizardProvider, wizardFactory)
-
-	printer := output.NewTextPrinter(VERSION)
 
 	cmdFactory := commands.NewCmdFactory(wizardProvider, wizardLoader, printer)
 	runner := commands.NewCommandRunner(printer, cmdFactory)

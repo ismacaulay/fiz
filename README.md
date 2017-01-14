@@ -21,14 +21,15 @@ Conditions can either be 1 variable, or multiple variables with operators. Opera
     "variables": [
         {
             "name": "ClassName",
+            "type": "string"
         },
         {
             "name": "CreateMock",
-            "default": false
+            "type": "bool"
         },
         {
             "name": "CreateNamespace",
-            "default": false
+            "type": "bool"
         },
         {
             "name": "Namespace",

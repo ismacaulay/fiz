@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/ismacaulay/fiz/output"
+	"github.com/ismacaulay/fiz/io"
 )
 
 type Runner interface {
@@ -9,11 +9,11 @@ type Runner interface {
 }
 
 type CommandRunner struct {
-	printer output.Printer
+	printer io.Printer
 	factory Factory
 }
 
-func NewCommandRunner(printer output.Printer, factory Factory) *CommandRunner {
+func NewCommandRunner(printer io.Printer, factory Factory) *CommandRunner {
 	return &CommandRunner{printer, factory}
 }
 

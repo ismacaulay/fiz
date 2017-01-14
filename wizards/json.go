@@ -2,7 +2,7 @@ package wizards
 
 type VariableJson struct {
 	Name      string
-	Default   interface{}
+	Type      string
 	Condition []string
 }
 

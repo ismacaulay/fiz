@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/ismacaulay/fiz/defines"
-	"github.com/ismacaulay/fiz/output"
+	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/wizards"
 
 	"bytes"
@@ -11,10 +11,10 @@ import (
 
 type ListCommand struct {
 	provider wizards.Provider
-	printer  output.Printer
+	printer  io.Printer
 }
 
-func NewListCommand(provider wizards.Provider, printer output.Printer) *ListCommand {
+func NewListCommand(provider wizards.Provider, printer io.Printer) *ListCommand {
 	return &ListCommand{provider, printer}
 }
 

@@ -1,22 +1,22 @@
 package commands
 
 import (
-	"github.com/ismacaulay/fiz/output"
+	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/wizards"
 )
 
 type Factory interface {
 	CreateListCmd() Command
-	CreateWizardCmd(commands []string) Command;
+	CreateWizardCmd(commands []string) Command
 }
 
 type CmdFactory struct {
 	provider wizards.Provider
-	loader wizards.Loader
-	printer  output.Printer
+	loader   wizards.Loader
+	printer  io.Printer
 }
 
-func NewCmdFactory(provider wizards.Provider, loader wizards.Loader, printer output.Printer) *CmdFactory {
+func NewCmdFactory(provider wizards.Provider, loader wizards.Loader, printer io.Printer) *CmdFactory {
 	return &CmdFactory{provider, loader, printer}
 }
 
