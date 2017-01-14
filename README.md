@@ -1,4 +1,4 @@
-# fiz
+# fiz [![Build Status](https://travis-ci.org/ismacaulay/fiz.svg?branch=master)](https://travis-ci.org/ismacaulay/fiz)
 A file wizard command line tool
 
 ### Initial wizard json format
