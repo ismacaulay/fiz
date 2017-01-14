@@ -1,8 +1,8 @@
-package utils
+package defines
 
 import (
-    "os"
-    "path/filepath"
+	"os"
+	"path/filepath"
 )
 
 var APP_DATA_DIR = filepath.Join(os.Getenv("HOME"), "Library", "Application Support", "fiz")

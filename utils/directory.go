@@ -1,20 +1,22 @@
 package utils
 
 import (
-    "path/filepath"
+	"path/filepath"
+
+	"github.com/ismacaulay/fiz/defines"
 )
 
 type DirectoryProvider interface {
-    WizardsDirectory() string
+	WizardsDirectory() string
 }
 
 type RealDirectoryProvider struct {
 }
 
 func NewDirectoryProvider() *RealDirectoryProvider {
-    return &RealDirectoryProvider{}
+	return &RealDirectoryProvider{}
 }
 
 func (dp *RealDirectoryProvider) WizardsDirectory() string {
-    return filepath.Join(APP_DATA_DIR, "wizards")
+	return filepath.Join(defines.APP_DATA_DIR, "wizards")
 }
