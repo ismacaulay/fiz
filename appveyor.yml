@@ -12,5 +12,5 @@ environment:
   GOPATH: c:\gopath
 
 build_script:  
-  - go build
+  - go test ./...
 
