@@ -11,6 +11,9 @@ clone_folder: c:\gopath\src\github.com\ismacaulay\fiz
 environment:  
   GOPATH: c:\gopath
 
+install:
+  - go get -v -t ./...
+
 build_script:  
   - go test ./...
 
