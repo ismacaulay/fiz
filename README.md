@@ -1,4 +1,5 @@
-# fiz [![Build Status](https://travis-ci.org/ismacaulay/fiz.svg?branch=master)](https://travis-ci.org/ismacaulay/fiz) [![Build status](https://ci.appveyor.com/api/projects/status/ctgwphqyc696u7ka?svg=true)](https://ci.appveyor.com/project/ismacaulay/fiz)
+# fiz [![Build Status](https://travis-ci.org/ismacaulay/fiz.svg?branch=master)](https://travis-ci.org/ismacaulay/fiz) [![Build status](https://ci.appveyor.com/api/projects/status/ctgwphqyc696u7ka?svg=true)](https://ci.appveyor.com/project/ismacaulay/fiz) [![codecov](https://codecov.io/gh/ismacaulay/fiz/branch/master/graph/badge.svg)](https://codecov.io/gh/ismacaulay/fiz)
+
 A file wizard command line tool
 
 ### Initial wizard json format
