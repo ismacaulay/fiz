@@ -12,7 +12,7 @@ type Application struct {
 func NewApp(external External) *Application {
 	wizardFactory := wizards.NewWizardFactory(external.FileSystem(), external.Input(), external.Printer())
 	wizardProvider := wizards.NewWizardProvider(external.FileSystem(), external.DirectoryProvider())
-	wizardLoader := wizards.NewWizardLoader(wizardProvider, wizardFactory)
+	wizardLoader := wizards.NewWizardLoader(wizardProvider, wizardFactory, external.FileSystem())
 
 	cmdFactory := commands.NewCmdFactory(wizardProvider, wizardLoader, external.Printer())
 	runner := commands.NewCommandRunner(external.Printer(), cmdFactory)

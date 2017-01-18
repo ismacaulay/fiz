@@ -15,9 +15,9 @@ Conditions can either be 1 variable, or multiple variables with operators. Opera
 ```
 {
     "templates": [
-        { "name": "hello.cpp" },
-        { "name": "hello.h" },
-        { "name": "mock_hello.h", "condition": ["CreateMock"] }
+        { "name": "hello.cpp", "output": "{ClassName}.cpp" },
+        { "name": "hello.h", "output": "{ClassName}.h" },
+        { "name": "mock_hello.h", "output": "Mock{ClassName}.h", "condition": ["CreateMock"] }
     ],
     "variables": [
         {

@@ -29,7 +29,7 @@ func (i *CliInput) GetBoolean(message string) (bool, error) {
 	switch strings.ToLower(strings.TrimSpace(text)) {
 	case "y", "yes":
 		return true, nil
-	case "n", "no":
+	case "n", "no", "":
 		return false, nil
 	default:
 		return false, errors.New("Invalid input")

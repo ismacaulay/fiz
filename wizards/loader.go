@@ -2,6 +2,8 @@ package wizards
 
 import (
 	"errors"
+
+	"github.com/ismacaulay/fiz/utils"
 )
 
 type Loader interface {
@@ -11,10 +13,11 @@ type Loader interface {
 type WizardLoader struct {
 	provider Provider
 	factory  Factory
+	fs       utils.FileSystem
 }
 
-func NewWizardLoader(p Provider, f Factory) *WizardLoader {
-	return &WizardLoader{p, f}
+func NewWizardLoader(p Provider, f Factory, fs utils.FileSystem) *WizardLoader {
+	return &WizardLoader{p, f, fs}
 }
 
 func (l *WizardLoader) Load(commands []string) (Wizard, error) {
@@ -41,7 +44,12 @@ func (l *WizardLoader) Load(commands []string) (Wizard, error) {
 		return nil, invalidCommandError(commands)
 	}
 
-	return l.factory.Create(info), nil
+	outDir, err := l.fs.GetCwd()
+	if err != nil {
+		return nil, err
+	}
+
+	return l.factory.Create(info, outDir), nil
 }
 
 func invalidCommandError(commands []string) error {

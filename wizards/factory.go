@@ -6,7 +6,7 @@ import (
 )
 
 type Factory interface {
-	Create(info WizardInfo) Wizard
+	Create(info WizardInfo, outdir string) Wizard
 }
 
 type WizardFactory struct {
@@ -19,6 +19,6 @@ func NewWizardFactory(fs utils.FileSystem, input io.Input, printer io.Printer) *
 	return &WizardFactory{fs, input, printer}
 }
 
-func (f *WizardFactory) Create(info WizardInfo) Wizard {
-	return NewWizard(info, f.fs, f.input, f.printer)
+func (f *WizardFactory) Create(info WizardInfo, outdir string) Wizard {
+	return NewWizard(info, f.fs, f.input, f.printer, outdir)
 }

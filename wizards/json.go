@@ -8,6 +8,7 @@ type VariableJson struct {
 
 type TemplateJson struct {
 	Name      string
+	Output    string
 	Condition []string
 }
 
