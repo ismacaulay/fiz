@@ -9,7 +9,6 @@ notifications:
 language: go
 go:
   - 1.7.x
-  - master
 
 script:
   - bash coverage.sh
