@@ -55,8 +55,6 @@ func (c *ListCommand) Run() error {
 		}
 
 		if err := c.printTemplate(list, GROUP_WIZARD_TMPL); err != nil {
-			c.printer.Error(err)
-
 			return err
 		}
 	}

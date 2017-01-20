@@ -1,4 +1,4 @@
-package mocks
+package wizards_mocks
 
 import (
 	"gopkg.in/stretchr/testify.v1/mock"
