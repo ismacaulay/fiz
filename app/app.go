@@ -10,11 +10,16 @@ type Application struct {
 }
 
 func NewApp(external External) *Application {
-	wizardFactory := wizards.NewWizardFactory(external.FileSystem(), external.Input(), external.Printer())
-	wizardProvider := wizards.NewWizardProvider(external.FileSystem(), external.DirectoryProvider())
-	wizardLoader := wizards.NewWizardLoader(wizardProvider, wizardFactory, external.FileSystem())
+	validator := wizards.NewWizardValidator()
+	processor := wizards.NewWizardProcessor(external.Input())
+	generator := wizards.NewOutputGenerator(external.FileSystem())
+	factory := wizards.NewWizardFactory(
+		validator, processor, generator,
+		external.FileSystem(), external.Input(), external.Printer())
+	provider := wizards.NewWizardProvider(external.FileSystem(), external.DirectoryProvider())
+	loader := wizards.NewWizardLoader(provider, factory, external.FileSystem())
 
-	cmdFactory := commands.NewCmdFactory(wizardProvider, wizardLoader, external.Printer())
+	cmdFactory := commands.NewCmdFactory(provider, loader, external.Printer())
 	runner := commands.NewCommandRunner(external.Printer(), cmdFactory)
 
 	return &Application{runner}

@@ -10,15 +10,20 @@ type Factory interface {
 }
 
 type WizardFactory struct {
+	v       Validator
+	p       Processor
+	g       Generator
 	fs      utils.FileSystem
 	input   io.Input
 	printer io.Printer
 }
 
-func NewWizardFactory(fs utils.FileSystem, input io.Input, printer io.Printer) *WizardFactory {
-	return &WizardFactory{fs, input, printer}
+func NewWizardFactory(
+	v Validator, p Processor, g Generator,
+	fs utils.FileSystem, input io.Input, printer io.Printer) *WizardFactory {
+	return &WizardFactory{v, p, g, fs, input, printer}
 }
 
 func (f *WizardFactory) Create(info WizardInfo, outdir string) Wizard {
-	return NewWizard(info, f.fs, f.input, f.printer, outdir)
+	return NewWizard(info, f.v, f.p, f.g, f.fs, f.input, f.printer, outdir)
 }
