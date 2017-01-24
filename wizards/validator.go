@@ -12,35 +12,39 @@ type Validator interface {
 	Validate(info WizardInfo, json WizardJson) error
 }
 
-type pathValidator interface {
+type PathValidator interface {
 	Validate(name, basepath string) error
 }
 
-type stringValidator interface {
+type StringValidator interface {
 	Validate(output string, variables []VariableJson) error
 }
 
-type expressionValidator interface {
+type ExpressionValidator interface {
 	Validate(expression []string, variables []VariableJson) error
 }
 
-type templateValidator struct {
+type TemplateValidator struct {
 }
 
-type outputPathValidator struct {
+type OutputPathValidator struct {
 }
 
-type conditionValidator struct {
+type ConditionValidator struct {
 }
 
 type WizardValidator struct {
-	pv pathValidator
-	sv stringValidator
-	cv expressionValidator
+	pv PathValidator
+	sv StringValidator
+	cv ExpressionValidator
 }
 
 func NewWizardValidator() *WizardValidator {
-	return &WizardValidator{}
+	return &WizardValidator{
+		&TemplateValidator{},
+		&OutputPathValidator{},
+		&ConditionValidator{},
+	}
 }
 
 func (v *WizardValidator) Validate(info WizardInfo, data WizardJson) error {
@@ -66,7 +70,7 @@ func (v *WizardValidator) Validate(info WizardInfo, data WizardJson) error {
 	return nil
 }
 
-func (v *templateValidator) Validate(name, basepath string) error {
+func (v *TemplateValidator) Validate(name, basepath string) error {
 	templatePath := filepath.Clean(filepath.Join(basepath, name))
 	if _, err := template.ParseFiles(templatePath); err != nil {
 		return err
@@ -75,7 +79,7 @@ func (v *templateValidator) Validate(name, basepath string) error {
 	return nil
 }
 
-func (v *outputPathValidator) Validate(output string, variables []VariableJson) error {
+func (v *OutputPathValidator) Validate(output string, variables []VariableJson) error {
 	if len(output) == 0 {
 		return errors.New("No output file specified")
 	}
@@ -104,7 +108,7 @@ func (v *outputPathValidator) Validate(output string, variables []VariableJson) 
 	return nil
 }
 
-func (v *conditionValidator) Validate(expression []string, variables []VariableJson) error {
+func (v *ConditionValidator) Validate(expression []string, variables []VariableJson) error {
 	if len(expression) == 0 {
 		return nil
 	} else if len(expression)%2 == 0 {
