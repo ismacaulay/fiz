@@ -7,19 +7,19 @@ import (
 	"testing"
 
 	"github.com/ismacaulay/fiz/commands"
-	"github.com/ismacaulay/fiz/wizards/mocks"
+	"github.com/ismacaulay/fiz/wizards"
 )
 
 type WizardCommandTestSuite struct {
 	suite.Suite
 
-	Loader *wizards_mocks.MockLoader
+	Loader *wizards.MockLoader
 
 	Patient *commands.WizardCommand
 }
 
 func (td *WizardCommandTestSuite) SetupTest() {
-	td.Loader = wizards_mocks.NewMockLoader()
+	td.Loader = wizards.NewMockLoader()
 }
 
 func (td *WizardCommandTestSuite) TestRunReturnsErrorWhenLoadingFails() {
@@ -28,7 +28,7 @@ func (td *WizardCommandTestSuite) TestRunReturnsErrorWhenLoadingFails() {
 	args := make([]string, 0)
 	td.Patient = commands.NewWizardCommand(td.Loader, args)
 
-	td.Loader.On("Load", args).Return(wizards_mocks.NewMockWizard(), errors.New("Error"))
+	td.Loader.On("Load", args).Return(wizards.NewMockWizard(), errors.New("Error"))
 
 	err := td.Patient.Run()
 	assert.Error(err)
@@ -42,7 +42,7 @@ func (td *WizardCommandTestSuite) TestRunWizardWhenLoadingSuccessful() {
 	args := make([]string, 0)
 	td.Patient = commands.NewWizardCommand(td.Loader, args)
 
-	wizard := wizards_mocks.NewMockWizard()
+	wizard := wizards.NewMockWizard()
 	wizard.On("Run").Return(nil)
 	td.Loader.On("Load", args).Return(wizard, nil)
 

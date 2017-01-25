@@ -7,20 +7,19 @@ import (
 	"github.com/ismacaulay/fiz/commands"
 	"github.com/ismacaulay/fiz/io/mocks"
 	"github.com/ismacaulay/fiz/wizards"
-	"github.com/ismacaulay/fiz/wizards/mocks"
 )
 
 type ListCommandTestSuite struct {
 	suite.Suite
 
-	Provider *wizards_mocks.MockProvider
+	Provider *wizards.MockProvider
 	Printer  *io_mocks.MockPrinter
 
 	Patient *commands.ListCommand
 }
 
 func (td *ListCommandTestSuite) SetupTest() {
-	td.Provider = wizards_mocks.NewMockProvider()
+	td.Provider = wizards.NewMockProvider()
 	td.Printer = io_mocks.NewMockPrinter()
 
 	td.Patient = commands.NewListCommand(td.Provider, td.Printer)

@@ -3,6 +3,7 @@ package wizards
 import (
 	"encoding/json"
 	"fmt"
+	"gopkg.in/stretchr/testify.v1/mock"
 
 	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/utils"
@@ -75,4 +76,21 @@ func (w *RealWizard) Run() error {
 		}
 	}
 	return nil
+}
+
+/************************************
+ * Mock
+ ************************************/
+
+type MockWizard struct {
+	mock.Mock
+}
+
+func NewMockWizard() *MockWizard {
+	return &MockWizard{}
+}
+
+func (m *MockWizard) Run() error {
+	args := m.Called()
+	return args.Error(0)
 }

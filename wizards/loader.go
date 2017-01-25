@@ -2,6 +2,7 @@ package wizards
 
 import (
 	"errors"
+	"gopkg.in/stretchr/testify.v1/mock"
 
 	"github.com/ismacaulay/fiz/utils"
 )
@@ -59,4 +60,20 @@ func invalidCommandError(commands []string) error {
 	}
 	msg += "\n\n"
 	return errors.New(msg)
+}
+
+/************************************
+ * Mock
+ ************************************/
+type MockLoader struct {
+	mock.Mock
+}
+
+func NewMockLoader() *MockLoader {
+	return &MockLoader{}
+}
+
+func (m *MockLoader) Load(commands []string) (Wizard, error) {
+	args := m.Called(commands)
+	return args.Get(0).(Wizard), args.Error(1)
 }

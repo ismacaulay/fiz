@@ -3,6 +3,7 @@ package wizards
 import (
 	"github.com/ismacaulay/fiz/defines"
 	"github.com/ismacaulay/fiz/utils"
+	"gopkg.in/stretchr/testify.v1/mock"
 
 	"errors"
 	"fmt"
@@ -110,4 +111,35 @@ func appendWizard(wizards map[string][]WizardInfo, wizardGroup, wizardFile, base
 
 func isWizardFile(fname string) bool {
 	return filepath.Ext(fname) == defines.WIZARD_EXT
+}
+
+/************************************
+ * Mock
+ ************************************/
+type MockProvider struct {
+	mock.Mock
+}
+
+func NewMockProvider() *MockProvider {
+	return &MockProvider{}
+}
+
+func (m *MockProvider) Run() error {
+	args := m.Called()
+	return args.Error(0)
+}
+
+func (m *MockProvider) AllAvailableWizards() (map[string][]WizardInfo, error) {
+	args := m.Called()
+	return args.Get(0).(map[string][]WizardInfo), args.Error(1)
+}
+
+func (m *MockProvider) GetWizardInfo(group, wizard string) (WizardInfo, error) {
+	args := m.Called(group, wizard)
+	return args.Get(0).(WizardInfo), args.Error(1)
+}
+
+func (m *MockProvider) FindWizardGroup(wizard string) (string, error) {
+	args := m.Called(wizard)
+	return args.String(0), args.Error(1)
 }

@@ -10,7 +10,7 @@ type Application struct {
 }
 
 func NewApp(external External) *Application {
-	validator := wizards.NewWizardValidator()
+	validator := wizards.NewWizardValidator(external.TemplateGenerator())
 	processor := wizards.NewWizardProcessor(external.Input())
 	generator := wizards.NewOutputGenerator(external.FileSystem())
 	factory := wizards.NewWizardFactory(

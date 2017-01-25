@@ -5,110 +5,90 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
-	"text/template"
+
+	"github.com/ismacaulay/fiz/utils"
 )
 
 type Validator interface {
 	Validate(info WizardInfo, json WizardJson) error
 }
 
-type PathValidator interface {
-	Validate(name, basepath string) error
-}
-
-type StringValidator interface {
-	Validate(output string, variables []VariableJson) error
-}
-
-type ExpressionValidator interface {
-	Validate(expression []string, variables []VariableJson) error
-}
-
-type TemplateValidator struct {
-}
-
-type OutputPathValidator struct {
-}
-
-type ConditionValidator struct {
-}
-
 type WizardValidator struct {
-	pv PathValidator
-	sv StringValidator
-	cv ExpressionValidator
+	t utils.TemplateGenerator
 }
 
-func NewWizardValidator() *WizardValidator {
-	return &WizardValidator{
-		&TemplateValidator{},
-		&OutputPathValidator{},
-		&ConditionValidator{},
-	}
+func NewWizardValidator(t utils.TemplateGenerator) *WizardValidator {
+	return &WizardValidator{t}
 }
 
 func (v *WizardValidator) Validate(info WizardInfo, data WizardJson) error {
 	basepath, _ := filepath.Split(info.Path)
 
 	for _, t := range data.Templates {
-		if err := v.pv.Validate(t.Name, basepath); err != nil {
+		if err := v.validateTemplate(t.Name, basepath); err != nil {
 			return err
 		}
-		if err := v.sv.Validate(t.Output, data.Variables); err != nil {
+		if err := v.validateOutputPath(t.Output, data.Variables); err != nil {
 			return err
 		}
-		if err := v.cv.Validate(t.Condition, data.Variables); err != nil {
+		if err := v.validateCondition(t.Condition, data.Variables); err != nil {
 			return err
 		}
 	}
 
 	for _, variable := range data.Variables {
-		if err := v.cv.Validate(variable.Condition, data.Variables); err != nil {
+		if err := v.validateCondition(variable.Condition, data.Variables); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (v *TemplateValidator) Validate(name, basepath string) error {
+func (v *WizardValidator) validateTemplate(name, basepath string) error {
 	templatePath := filepath.Clean(filepath.Join(basepath, name))
-	if _, err := template.ParseFiles(templatePath); err != nil {
-		return err
-	}
-
-	return nil
+	return v.t.Validate(templatePath)
 }
 
-func (v *OutputPathValidator) Validate(output string, variables []VariableJson) error {
+func (v *WizardValidator) validateOutputPath(output string, variables []VariableJson) error {
 	if len(output) == 0 {
 		return errors.New("No output file specified")
 	}
 
-	if lIndex := strings.Index(output, "{"); lIndex != -1 {
-		if rIndex := strings.LastIndex(output, "}"); rIndex != -1 {
+	processedOutput := output
+	for {
+		lIndex := strings.Index(processedOutput, "{")
+		rIndex := strings.Index(processedOutput, "}")
+		if lIndex > -1 && rIndex > -1 {
 			if lIndex < rIndex {
-				variable := output[lIndex+1 : rIndex]
+				variable := processedOutput[lIndex+1 : rIndex]
+				found := false
 				for _, v := range variables {
 					if v.Name == variable {
-						return nil
+						if v.Type == "string" {
+							processedOutput = processedOutput[rIndex+1:]
+							found = true
+							break
+						}
+						return errors.New("Variable needs to be a string")
 					}
 				}
-
-				return errors.New(fmt.Sprint("Could not find variable:", variable))
+				if !found {
+					return errors.New(fmt.Sprint("Could not find variable: ", variable))
+				}
 			} else {
 				return errors.New(fmt.Sprint(output, "is invalid"))
 			}
+		} else if lIndex > -1 {
+			return errors.New(fmt.Sprint("Missing } in ", output))
+		} else if rIndex > -1 {
+			return errors.New(fmt.Sprint("Missing { in ", output))
 		} else {
-			return errors.New(fmt.Sprint("Missing } in", output))
+			return nil
 		}
-	} else if strings.LastIndex(output, "}") != -1 {
-		return errors.New(fmt.Sprint("Missing { in", output))
 	}
-
-	return nil
 }
 
-func (v *ConditionValidator) Validate(expression []string, variables []VariableJson) error {
+func (v *WizardValidator) validateCondition(expression []string, variables []VariableJson) error {
 	if len(expression) == 0 {
 		return nil
 	} else if len(expression)%2 == 0 {
@@ -117,8 +97,10 @@ func (v *ConditionValidator) Validate(expression []string, variables []VariableJ
 
 	for index, element := range expression {
 		if index%2 == 0 {
+			found := false
 			for _, variable := range variables {
 				if variable.Name == element {
+					found = true
 					switch variable.Type {
 					case "bool":
 						continue
@@ -128,12 +110,15 @@ func (v *ConditionValidator) Validate(expression []string, variables []VariableJ
 
 				}
 			}
+			if !found {
+				return errors.New("Invalid expression")
+			}
 		} else {
 			switch element {
 			case "&&", "||":
 				continue
 			default:
-				return errors.New("Invalid element")
+				return errors.New("Invalid operator")
 			}
 		}
 	}

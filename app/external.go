@@ -8,6 +8,7 @@ import (
 type External interface {
 	FileSystem() utils.FileSystem
 	DirectoryProvider() utils.DirectoryProvider
+	TemplateGenerator() utils.TemplateGenerator
 	Input() io.Input
 	Printer() io.Printer
 }
@@ -15,6 +16,7 @@ type External interface {
 type RealExternal struct {
 	fileSystem        utils.FileSystem
 	directoryProvider utils.DirectoryProvider
+	templateGenerator utils.TemplateGenerator
 	input             io.Input
 	printer           io.Printer
 }
@@ -22,10 +24,11 @@ type RealExternal struct {
 func NewExternal(version string) *RealExternal {
 	filesystem := utils.NewFileSystem()
 	directoryProvider := utils.NewDirectoryProvider()
+	templateGenerator := utils.NewTemplateGenerator()
 	input := io.NewCliInput()
 	printer := io.NewTextPrinter(version)
 
-	return &RealExternal{filesystem, directoryProvider, input, printer}
+	return &RealExternal{filesystem, directoryProvider, templateGenerator, input, printer}
 }
 
 func (e *RealExternal) FileSystem() utils.FileSystem {
@@ -34,6 +37,10 @@ func (e *RealExternal) FileSystem() utils.FileSystem {
 
 func (e *RealExternal) DirectoryProvider() utils.DirectoryProvider {
 	return e.directoryProvider
+}
+
+func (e *RealExternal) TemplateGenerator() utils.TemplateGenerator {
+	return e.templateGenerator
 }
 
 func (e *RealExternal) Input() io.Input {
