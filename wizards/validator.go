@@ -23,7 +23,6 @@ func NewWizardValidator(t utils.TemplateGenerator) *WizardValidator {
 
 func (v *WizardValidator) Validate(info WizardInfo, data WizardJson) error {
 	basepath, _ := filepath.Split(info.Path)
-
 	for _, t := range data.Templates {
 		if err := v.validateTemplate(t.Name, basepath); err != nil {
 			return err
@@ -46,7 +45,7 @@ func (v *WizardValidator) Validate(info WizardInfo, data WizardJson) error {
 
 func (v *WizardValidator) validateTemplate(name, basepath string) error {
 	templatePath := filepath.Clean(filepath.Join(basepath, name))
-	return v.t.Validate(templatePath)
+	return v.t.ValidateFile(templatePath)
 }
 
 func (v *WizardValidator) validateOutputPath(output string, variables []VariableJson) error {
@@ -76,7 +75,7 @@ func (v *WizardValidator) validateOutputPath(output string, variables []Variable
 					return errors.New(fmt.Sprint("Could not find variable: ", variable))
 				}
 			} else {
-				return errors.New(fmt.Sprint(output, "is invalid"))
+				return errors.New(fmt.Sprint(output, " is invalid"))
 			}
 		} else if lIndex > -1 {
 			return errors.New(fmt.Sprint("Missing } in ", output))

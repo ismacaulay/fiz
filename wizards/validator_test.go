@@ -21,12 +21,147 @@ type WizardValidatorTestSuite struct {
 	Patient *WizardValidator
 }
 
-func (td *WizardValidatorTestSuite) SetupTest() {
+func (td *WizardValidatorTestSuite) beforeEachCase() {
 	td.Template = utils.NewMockTemplateGenerator()
 	td.Patient = NewWizardValidator(td.Template)
 }
 
 func (td *WizardValidatorTestSuite) TestValidate() {
+	assert := assert.New(td.Suite.T())
+
+	var cases = []struct {
+		name          string
+		info          WizardInfo
+		data          WizardJson
+		validateError error
+		shouldError   bool
+	}{
+		{
+			"Valid json",
+			WizardInfo{
+				"hello",
+				"world",
+				"/opt/hello/world/hw.wizard",
+			},
+			WizardJson{
+				[]TemplateJson{
+					TemplateJson{"source.cpp", "{ClassName}.cpp", nil},
+					TemplateJson{"header.h", "{ClassName}.h", nil},
+					TemplateJson{"test.cpp", "test/{ClassName}/Test{ClassName}.cpp", []string{"CreateTest"}},
+				},
+				[]VariableJson{
+					VariableJson{"ClassName", "string", nil},
+					VariableJson{"CreateTest", "bool", nil},
+					VariableJson{"CreateDifferentObject", "bool", nil},
+					VariableJson{"CreateObject", "bool", []string{"CreateTest", "||", "CreateDifferentObject"}},
+				},
+			},
+			nil,
+			false,
+		},
+		{
+			"Invalid template",
+			WizardInfo{
+				"hello",
+				"world",
+				"/opt/hello/world/hw.wizard",
+			},
+			WizardJson{
+				[]TemplateJson{
+					TemplateJson{"source.cpp", "{ClassName}.cpp", nil},
+					TemplateJson{"header.h", "{ClassName}.h", nil},
+					TemplateJson{"test.cpp", "test/{ClassName}/Test{ClassName}.cpp", []string{"CreateTest"}},
+				},
+				[]VariableJson{
+					VariableJson{"ClassName", "string", nil},
+					VariableJson{"CreateTest", "bool", nil},
+					VariableJson{"CreateDifferentObject", "bool", nil},
+					VariableJson{"CreateObject", "bool", []string{"CreateTest", "||", "CreateDifferentObject"}},
+				},
+			},
+			errors.New("Invalid template"),
+			true,
+		},
+		{
+			"Invalid output path",
+			WizardInfo{
+				"hello",
+				"world",
+				"/opt/hello/world/hw.wizard",
+			},
+			WizardJson{
+				[]TemplateJson{
+					TemplateJson{"source.cpp", "{ClassName}.cpp", nil},
+					TemplateJson{"header.h", "{ClassName}.h", nil},
+					TemplateJson{"test.cpp", "test/{ClassName}/Test{ClassName}.cpp", []string{"CreateTest"}},
+				},
+				[]VariableJson{
+					VariableJson{"CreateTest", "bool", nil},
+					VariableJson{"CreateDifferentObject", "bool", nil},
+					VariableJson{"CreateObject", "bool", []string{"CreateTest", "||", "CreateDifferentObject"}},
+				},
+			},
+			nil,
+			true,
+		},
+		{
+			"Invalid template condition",
+			WizardInfo{
+				"hello",
+				"world",
+				"/opt/hello/world/hw.wizard",
+			},
+			WizardJson{
+				[]TemplateJson{
+					TemplateJson{"source.cpp", "{ClassName}.cpp", nil},
+					TemplateJson{"header.h", "{ClassName}.h", nil},
+					TemplateJson{"test.cpp", "test/{ClassName}/Test{ClassName}.cpp", []string{"CreateTest"}},
+				},
+				[]VariableJson{
+					VariableJson{"ClassName", "string", nil},
+					VariableJson{"CreateTest", "string", nil},
+					VariableJson{"CreateDifferentObject", "bool", nil},
+					VariableJson{"CreateObject", "bool", []string{"CreateTest", "||", "CreateDifferentObject"}},
+				},
+			},
+			nil,
+			true,
+		},
+		{
+			"Invalid variable condition",
+			WizardInfo{
+				"hello",
+				"world",
+				"/opt/hello/world/hw.wizard",
+			},
+			WizardJson{
+				[]TemplateJson{
+					TemplateJson{"source.cpp", "{ClassName}.cpp", nil},
+					TemplateJson{"header.h", "{ClassName}.h", nil},
+					TemplateJson{"test.cpp", "test/{ClassName}/Test{ClassName}.cpp", []string{"CreateTest"}},
+				},
+				[]VariableJson{
+					VariableJson{"ClassName", "string", nil},
+					VariableJson{"CreateTest", "bool", nil},
+					VariableJson{"CreateDifferentObject", "string", nil},
+					VariableJson{"CreateObject", "bool", []string{"CreateTest", "||", "CreateDifferentObject"}},
+				},
+			},
+			nil,
+			true,
+		},
+	}
+
+	for _, c := range cases {
+		td.beforeEachCase()
+
+		td.Template.On("ValidateFile", filepath.Clean(filepath.Join("/opt/hello/world", "source.cpp"))).Return(c.validateError)
+		td.Template.On("ValidateFile", filepath.Clean(filepath.Join("/opt/hello/world", "header.h"))).Return(c.validateError)
+		td.Template.On("ValidateFile", filepath.Clean(filepath.Join("/opt/hello/world", "test.cpp"))).Return(c.validateError)
+
+		err := td.Patient.Validate(c.info, c.data)
+		assert.Equal(c.shouldError, err != nil, c.name)
+	}
 }
 
 func (td *WizardValidatorTestSuite) TestValidateTemplate() {
@@ -42,7 +177,9 @@ func (td *WizardValidatorTestSuite) TestValidateTemplate() {
 	}
 
 	for _, c := range cases {
-		td.Template.On("Validate", filepath.Clean(filepath.Join(c.basepath, c.filename))).Return(errors.New(c.errMsg))
+		td.beforeEachCase()
+
+		td.Template.On("ValidateFile", filepath.Clean(filepath.Join(c.basepath, c.filename))).Return(errors.New(c.errMsg))
 
 		err := td.Patient.validateTemplate(c.filename, c.basepath)
 
@@ -115,9 +252,17 @@ func (td *WizardValidatorTestSuite) TestValidateOutputPath() {
 			[]VariableJson{VariableJson{"ClassName", "string", nil}},
 			"Missing { in /opt/Hello/{ClassName}/TestClassName}.cpp",
 		},
+		{
+			"Invalid - } before {",
+			"/opt/Hello/}ClassName{.cpp",
+			[]VariableJson{VariableJson{"ClassName", "string", nil}},
+			"/opt/Hello/}ClassName{.cpp is invalid",
+		},
 	}
 
 	for _, c := range cases {
+		td.beforeEachCase()
+
 		err := td.Patient.validateOutputPath(c.output, c.variables)
 		if err != nil {
 			assert.EqualError(err, c.errMsg, c.name)
@@ -217,6 +362,8 @@ func (td *WizardValidatorTestSuite) TestValidateCondition() {
 	}
 
 	for _, c := range cases {
+		td.beforeEachCase()
+
 		err := td.Patient.validateCondition(c.expression, c.variables)
 		if err != nil {
 			assert.EqualError(err, c.errMsg, c.name)
