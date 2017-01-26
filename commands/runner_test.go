@@ -1,29 +1,27 @@
-package commands_test
+package commands
 
 import (
 	"errors"
 	"gopkg.in/stretchr/testify.v1/suite"
 	"testing"
 
-	"github.com/ismacaulay/fiz/commands"
-	"github.com/ismacaulay/fiz/commands/mocks"
-	"github.com/ismacaulay/fiz/io/mocks"
+	"github.com/ismacaulay/fiz/io"
 )
 
 type CommandRunnerTestSuite struct {
 	suite.Suite
 
-	Printer *io_mocks.MockPrinter
-	Factory *commands_mocks.MockFactory
+	Printer *io.MockPrinter
+	Factory *MockFactory
 
-	Patient *commands.CommandRunner
+	Patient *CommandRunner
 }
 
 func (td *CommandRunnerTestSuite) SetupTest() {
-	td.Printer = io_mocks.NewMockPrinter()
-	td.Factory = commands_mocks.NewMockFactory()
+	td.Printer = io.NewMockPrinter()
+	td.Factory = NewMockFactory()
 
-	td.Patient = commands.NewCommandRunner(td.Printer, td.Factory)
+	td.Patient = NewCommandRunner(td.Printer, td.Factory)
 }
 
 func (td *CommandRunnerTestSuite) TestPrintHelpIfCommandsEmpty() {
@@ -43,7 +41,7 @@ func (td *CommandRunnerTestSuite) TestCreateAndRunListCommand() {
 		{"-l"},
 	}
 
-	command := commands_mocks.NewMockCommand()
+	command := NewMockCommand()
 	td.Factory.On("CreateListCmd").Return(command).Twice()
 	command.On("Run").Return(nil).Twice()
 
@@ -109,7 +107,7 @@ func (td *CommandRunnerTestSuite) TestCreateAndRunWizardCommand() {
 		{[]string{"world", "-t", "--hello"}},
 	}
 
-	command := commands_mocks.NewMockCommand()
+	command := NewMockCommand()
 	command.On("Run").Return(nil).Twice()
 
 	for _, c := range cases {
@@ -126,7 +124,7 @@ func (td *CommandRunnerTestSuite) TestCreateAndRunWizardCommand() {
 func (td *CommandRunnerTestSuite) TestPrintErrorWhenWizardCommandReturnsError() {
 	args := []string{"hello", "world"}
 	err := errors.New("Error")
-	command := commands_mocks.NewMockCommand()
+	command := NewMockCommand()
 
 	td.Factory.On("CreateWizardCmd", args).Return(command)
 	command.On("Run").Return(err)

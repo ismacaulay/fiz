@@ -1,4 +1,4 @@
-package commands_test
+package commands
 
 import (
 	"errors"
@@ -6,7 +6,6 @@ import (
 	"gopkg.in/stretchr/testify.v1/suite"
 	"testing"
 
-	"github.com/ismacaulay/fiz/commands"
 	"github.com/ismacaulay/fiz/wizards"
 )
 
@@ -15,7 +14,7 @@ type WizardCommandTestSuite struct {
 
 	Loader *wizards.MockLoader
 
-	Patient *commands.WizardCommand
+	Patient *WizardCommand
 }
 
 func (td *WizardCommandTestSuite) SetupTest() {
@@ -26,7 +25,7 @@ func (td *WizardCommandTestSuite) TestRunReturnsErrorWhenLoadingFails() {
 	assert := assert.New(td.Suite.T())
 
 	args := make([]string, 0)
-	td.Patient = commands.NewWizardCommand(td.Loader, args)
+	td.Patient = NewWizardCommand(td.Loader, args)
 
 	td.Loader.On("Load", args).Return(wizards.NewMockWizard(), errors.New("Error"))
 
@@ -40,7 +39,7 @@ func (td *WizardCommandTestSuite) TestRunWizardWhenLoadingSuccessful() {
 	assert := assert.New(td.Suite.T())
 
 	args := make([]string, 0)
-	td.Patient = commands.NewWizardCommand(td.Loader, args)
+	td.Patient = NewWizardCommand(td.Loader, args)
 
 	wizard := wizards.NewMockWizard()
 	wizard.On("Run").Return(nil)
