@@ -10,9 +10,6 @@ import (
 	"github.com/ismacaulay/fiz/utils"
 )
 
-/*
- * WizardValidator tests
- */
 type WizardValidatorTestSuite struct {
 	suite.Suite
 

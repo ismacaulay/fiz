@@ -3,6 +3,8 @@ package utils
 import (
 	"io/ioutil"
 	"os"
+
+	"gopkg.in/stretchr/testify.v1/mock"
 )
 
 type FileInfo struct {
@@ -48,4 +50,35 @@ func (fs *RealFileSystem) WriteFile(path string, data []byte) error {
 
 func (fs *RealFileSystem) GetCwd() (string, error) {
 	return os.Getwd()
+}
+
+/************************************
+ * Mock
+ ************************************/
+type MockFileSystem struct {
+	mock.Mock
+}
+
+func NewMockFileSystem() *MockFileSystem {
+	return &MockFileSystem{}
+}
+
+func (m *MockFileSystem) ListDirectory(path string) ([]FileInfo, error) {
+	args := m.Called(path)
+	return args.Get(0).([]FileInfo), args.Error(1)
+}
+
+func (m *MockFileSystem) ReadFile(path string) ([]byte, error) {
+	args := m.Called(path)
+	return args.Get(0).([]byte), args.Error(1)
+}
+
+func (m *MockFileSystem) WriteFile(path string, data []byte) error {
+	args := m.Called(path, data)
+	return args.Error(0)
+}
+
+func (m *MockFileSystem) GetCwd() (string, error) {
+	args := m.Called()
+	return args.String(0), args.Error(1)
 }

@@ -1,9 +1,6 @@
 package wizards
 
 import (
-	"bytes"
-	"text/template"
-
 	"github.com/ismacaulay/fiz/utils"
 )
 
@@ -12,22 +9,18 @@ type Generator interface {
 }
 
 type OutputGenerator struct {
-	fs utils.FileSystem
+	generator utils.TemplateGenerator
+	fs        utils.FileSystem
 }
 
-func NewOutputGenerator(fs utils.FileSystem) *OutputGenerator {
-	return &OutputGenerator{fs}
+func NewOutputGenerator(generator utils.TemplateGenerator, fs utils.FileSystem) *OutputGenerator {
+	return &OutputGenerator{generator, fs}
 }
 
 func (g *OutputGenerator) Generate(templates []TemplatePair, vars map[string]interface{}) error {
 	for _, t := range templates {
-		generator, err := template.ParseFiles(t.input)
+		buf, err := g.generator.ExecuteFile(t.input, vars)
 		if err != nil {
-			return err
-		}
-
-		buf := new(bytes.Buffer)
-		if err := generator.Execute(buf, vars); err != nil {
 			return err
 		}
 
