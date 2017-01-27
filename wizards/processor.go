@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/ismacaulay/fiz/io"
 )
@@ -55,7 +56,7 @@ func (p *WizardProcessor) getVariables(data WizardJson) (map[string]interface{},
 
 	for _, v := range data.Variables {
 		if len(v.Condition) > 0 {
-			condition := evaluateCondition(v.Condition, vars)
+			condition := p.evaluateCondition(v.Condition, vars)
 
 			if condition {
 				vars, err = p.getVariable(v, vars)
@@ -66,6 +67,10 @@ func (p *WizardProcessor) getVariables(data WizardJson) (map[string]interface{},
 		}
 	}
 
+	now := time.Now()
+	vars["Year"] = now.Year()
+	vars["Month"] = now.Month()
+	vars["Day"] = now.Day()
 	return vars, nil
 }
 
@@ -91,8 +96,8 @@ func (p *WizardProcessor) getVariable(v VariableJson, vars map[string]interface{
 func (p *WizardProcessor) getTemplates(basepath, outdir string, data WizardJson, vars map[string]interface{}) ([]TemplatePair, error) {
 	paths := make([]TemplatePair, 0)
 	for _, t := range data.Templates {
-		if evaluateCondition(t.Condition, vars) {
-			fname, err := replaceVars(t.Output, vars)
+		if p.evaluateCondition(t.Condition, vars) {
+			fname, err := p.replaceVars(t.Output, vars)
 			if err != nil {
 				return nil, err
 			}
@@ -107,36 +112,38 @@ func (p *WizardProcessor) getTemplates(basepath, outdir string, data WizardJson,
 	return paths, nil
 }
 
-func replaceVars(s string, vars map[string]interface{}) (string, error) {
-	lIndex := strings.Index(s, "{")
-	rIndex := strings.LastIndex(s, "}")
+func (p *WizardProcessor) replaceVars(s string, vars map[string]interface{}) (string, error) {
+	for {
+		lIndex := strings.Index(s, "{")
+		rIndex := strings.Index(s, "}")
+		if lIndex > -1 && rIndex > -1 {
+			variable := s[lIndex+1 : rIndex]
+			value, ok := vars[variable]
+			if !ok {
+				return s, errors.New(fmt.Sprint("Could not find variable: ", variable))
+			}
 
-	if lIndex != -1 && rIndex != -1 {
-		variable := s[lIndex+1 : rIndex]
-		value, ok := vars[variable]
-		if !ok {
-			return s, errors.New(fmt.Sprint("Could not find variable:", variable))
-		}
-
-		switch value.(type) {
-		case string:
-			ret := s[:lIndex] + value.(string) + s[rIndex+1:]
-			return ret, nil
-		default:
-			return s, errors.New(fmt.Sprint("Could not use variable:", variable, "since it is not a string"))
+			switch value.(type) {
+			case string:
+				s = s[:lIndex] + value.(string) + s[rIndex+1:]
+			default:
+				return s, errors.New(fmt.Sprint("Could not use variable:", variable, "since it is not a string"))
+			}
+		} else {
+			break
 		}
 	}
 
 	return s, nil
 }
 
-func evaluateCondition(conditions []string, vars map[string]interface{}) bool {
+func (p *WizardProcessor) evaluateCondition(conditions []string, vars map[string]interface{}) bool {
 	if len(conditions) == 0 {
 		return true
 	}
 
 	condition := vars[conditions[0]].(bool)
-	nextOperator := "&&"
+	nextOperator := ""
 	for _, c := range conditions[1:] {
 		switch c {
 		case "&&", "||":

@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"gopkg.in/stretchr/testify.v1/mock"
 )
 
 type Input interface {
@@ -48,4 +50,25 @@ func getInput(message string) (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print(message)
 	return reader.ReadString('\n')
+}
+
+/************************************
+ * Mock
+ ************************************/
+type MockInput struct {
+	mock.Mock
+}
+
+func NewMockInput() *MockInput {
+	return &MockInput{}
+}
+
+func (m *MockInput) GetBoolean(message string) (bool, error) {
+	args := m.Called(message)
+	return args.Bool(0), args.Error(1)
+}
+
+func (m *MockInput) GetString(message string) (string, error) {
+	args := m.Called(message)
+	return args.String(0), args.Error(1)
 }

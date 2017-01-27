@@ -2,9 +2,11 @@ package wizards
 
 import (
 	"errors"
-	"gopkg.in/stretchr/testify.v1/mock"
+	"strings"
 
 	"github.com/ismacaulay/fiz/utils"
+
+	"gopkg.in/stretchr/testify.v1/mock"
 )
 
 type Loader interface {
@@ -55,9 +57,7 @@ func (l *WizardLoader) Load(commands []string) (Wizard, error) {
 
 func invalidCommandError(commands []string) error {
 	msg := "Invalid command: "
-	for _, c := range commands {
-		msg += c + " "
-	}
+	msg += strings.Join(commands[:], " ")
 	msg += "\n\n"
 	return errors.New(msg)
 }

@@ -46,7 +46,7 @@ func (p *TextPrinter) Message(msg string) {
 }
 
 func (p *TextPrinter) Error(err error) {
-	fmt.Print("Error: ", err)
+	fmt.Println("Error: ", err)
 }
 
 func (p *TextPrinter) Commands() {

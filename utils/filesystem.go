@@ -3,6 +3,7 @@ package utils
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/stretchr/testify.v1/mock"
 )
@@ -45,6 +46,13 @@ func (fs *RealFileSystem) ReadFile(path string) ([]byte, error) {
 }
 
 func (fs *RealFileSystem) WriteFile(path string, data []byte) error {
+	dir, _ := filepath.Split(path)
+	if len(dir) > 0 {
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			return err
+		}
+	}
 	return ioutil.WriteFile(path, data, 0644)
 }
 
