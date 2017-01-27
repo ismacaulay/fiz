@@ -6,19 +6,19 @@ import (
 	"gopkg.in/stretchr/testify.v1/suite"
 	"testing"
 
-	"github.com/ismacaulay/fiz/io"
+	"github.com/ismacaulay/fiz/utils"
 )
 
 type WizardProcessorTestSuite struct {
 	suite.Suite
 
-	Input *io.MockInput
+	Input *utils.MockInput
 
 	Patient *WizardProcessor
 }
 
 func (td *WizardProcessorTestSuite) beforeEachCase() {
-	td.Input = io.NewMockInput()
+	td.Input = utils.NewMockInput()
 	td.Patient = NewWizardProcessor(td.Input)
 }
 

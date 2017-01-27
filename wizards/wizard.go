@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gopkg.in/stretchr/testify.v1/mock"
 
-	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/utils"
 )
 
@@ -19,15 +18,15 @@ type RealWizard struct {
 	processor Processor
 	generator Generator
 	fs        utils.FileSystem
-	input     io.Input
-	printer   io.Printer
+	input     utils.Input
+	printer   utils.Printer
 	outdir    string
 }
 
 func NewWizard(
 	info WizardInfo, v Validator, p Processor, g Generator,
 	fs utils.FileSystem,
-	input io.Input, printer io.Printer,
+	input utils.Input, printer utils.Printer,
 	outdir string) *RealWizard {
 	return &RealWizard{info, v, p, g, fs, input, printer, outdir}
 }

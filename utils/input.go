@@ -1,4 +1,5 @@
-package io
+package utils
+
 
 import (
 	"bufio"

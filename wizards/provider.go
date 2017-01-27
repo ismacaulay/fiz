@@ -1,7 +1,6 @@
 package wizards
 
 import (
-	"github.com/ismacaulay/fiz/defines"
 	"github.com/ismacaulay/fiz/utils"
 	"gopkg.in/stretchr/testify.v1/mock"
 
@@ -102,7 +101,7 @@ func appendWizard(wizards map[string][]WizardInfo, wizardGroup, wizardFile, base
 		wizards[wizardGroup] = make([]WizardInfo, 0)
 	}
 
-	wizardName := wizardFile[0 : len(wizardFile)-len(defines.WIZARD_EXT)]
+	wizardName := wizardFile[0 : len(wizardFile)-len(utils.WIZARD_EXT)]
 	wizard := WizardInfo{wizardGroup, wizardName, filepath.Join(basepath, wizardFile)}
 
 	wizards[wizardGroup] = append(wizards[wizardGroup], wizard)
@@ -110,7 +109,7 @@ func appendWizard(wizards map[string][]WizardInfo, wizardGroup, wizardFile, base
 }
 
 func isWizardFile(fname string) bool {
-	return filepath.Ext(fname) == defines.WIZARD_EXT
+	return filepath.Ext(fname) == utils.WIZARD_EXT
 }
 
 /************************************

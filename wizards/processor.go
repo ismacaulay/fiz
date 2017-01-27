@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ismacaulay/fiz/io"
+	"github.com/ismacaulay/fiz/utils"
 )
 
 type TemplatePair struct {
@@ -19,10 +19,10 @@ type Processor interface {
 }
 
 type WizardProcessor struct {
-	input io.Input
+	input utils.Input
 }
 
-func NewWizardProcessor(input io.Input) *WizardProcessor {
+func NewWizardProcessor(input utils.Input) *WizardProcessor {
 	return &WizardProcessor{input}
 }
 

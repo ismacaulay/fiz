@@ -1,8 +1,7 @@
 package commands
 
 import (
-	"github.com/ismacaulay/fiz/defines"
-	"github.com/ismacaulay/fiz/io"
+	"github.com/ismacaulay/fiz/utils"
 	"github.com/ismacaulay/fiz/wizards"
 
 	"bytes"
@@ -11,10 +10,10 @@ import (
 
 type ListCommand struct {
 	provider wizards.Provider
-	printer  io.Printer
+	printer  utils.Printer
 }
 
-func NewListCommand(provider wizards.Provider, printer io.Printer) *ListCommand {
+func NewListCommand(provider wizards.Provider, printer utils.Printer) *ListCommand {
 	return &ListCommand{provider, printer}
 }
 
@@ -42,13 +41,13 @@ func (c *ListCommand) Run() error {
 
 	c.printTemplate(nil, HEADER_TMPL)
 
-	if list, ok := wizards[defines.NONE_GROUP]; ok {
+	if list, ok := wizards[utils.NONE_GROUP]; ok {
 		if err := c.printTemplate(list, NONE_GROUP_TMPL); err != nil {
 			return err
 		}
 	}
 
-	delete(wizards, defines.NONE_GROUP)
+	delete(wizards, utils.NONE_GROUP)
 	for group, list := range wizards {
 		if err := c.printTemplate(group, GROUP_TMPL); err != nil {
 			return err

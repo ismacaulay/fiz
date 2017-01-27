@@ -1,7 +1,6 @@
 package app
 
 import (
-	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/utils"
 )
 
@@ -9,24 +8,24 @@ type External interface {
 	FileSystem() utils.FileSystem
 	DirectoryProvider() utils.DirectoryProvider
 	TemplateGenerator() utils.TemplateGenerator
-	Input() io.Input
-	Printer() io.Printer
+	Input() utils.Input
+	Printer() utils.Printer
 }
 
 type RealExternal struct {
 	fileSystem        utils.FileSystem
 	directoryProvider utils.DirectoryProvider
 	templateGenerator utils.TemplateGenerator
-	input             io.Input
-	printer           io.Printer
+	input             utils.Input
+	printer           utils.Printer
 }
 
 func NewExternal(version string) *RealExternal {
 	filesystem := utils.NewFileSystem()
 	directoryProvider := utils.NewDirectoryProvider()
 	templateGenerator := utils.NewTemplateGenerator()
-	input := io.NewCliInput()
-	printer := io.NewTextPrinter(version)
+	input := utils.NewCliInput()
+	printer := utils.NewTextPrinter(version)
 
 	return &RealExternal{filesystem, directoryProvider, templateGenerator, input, printer}
 }
@@ -43,10 +42,10 @@ func (e *RealExternal) TemplateGenerator() utils.TemplateGenerator {
 	return e.templateGenerator
 }
 
-func (e *RealExternal) Input() io.Input {
+func (e *RealExternal) Input() utils.Input {
 	return e.input
 }
 
-func (e *RealExternal) Printer() io.Printer {
+func (e *RealExternal) Printer() utils.Printer {
 	return e.printer
 }

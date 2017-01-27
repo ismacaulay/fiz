@@ -1,7 +1,6 @@
 package wizards
 
 import (
-	"github.com/ismacaulay/fiz/io"
 	"github.com/ismacaulay/fiz/utils"
 )
 
@@ -14,13 +13,13 @@ type WizardFactory struct {
 	p       Processor
 	g       Generator
 	fs      utils.FileSystem
-	input   io.Input
-	printer io.Printer
+	input   utils.Input
+	printer utils.Printer
 }
 
 func NewWizardFactory(
 	v Validator, p Processor, g Generator,
-	fs utils.FileSystem, input io.Input, printer io.Printer) *WizardFactory {
+	fs utils.FileSystem, input utils.Input, printer utils.Printer) *WizardFactory {
 	return &WizardFactory{v, p, g, fs, input, printer}
 }
 

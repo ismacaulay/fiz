@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/ismacaulay/fiz/io"
+	"github.com/ismacaulay/fiz/utils"
 	"github.com/ismacaulay/fiz/wizards"
 
 	"gopkg.in/stretchr/testify.v1/mock"
@@ -15,10 +15,10 @@ type Factory interface {
 type CmdFactory struct {
 	provider wizards.Provider
 	loader   wizards.Loader
-	printer  io.Printer
+	printer  utils.Printer
 }
 
-func NewCmdFactory(provider wizards.Provider, loader wizards.Loader, printer io.Printer) *CmdFactory {
+func NewCmdFactory(provider wizards.Provider, loader wizards.Loader, printer utils.Printer) *CmdFactory {
 	return &CmdFactory{provider, loader, printer}
 }
 

@@ -4,7 +4,7 @@ import (
 	"gopkg.in/stretchr/testify.v1/suite"
 	"testing"
 
-	"github.com/ismacaulay/fiz/io"
+	"github.com/ismacaulay/fiz/utils"
 	"github.com/ismacaulay/fiz/wizards"
 )
 
@@ -12,14 +12,14 @@ type ListCommandTestSuite struct {
 	suite.Suite
 
 	Provider *wizards.MockProvider
-	Printer  *io.MockPrinter
+	Printer  *utils.MockPrinter
 
 	Patient *ListCommand
 }
 
 func (td *ListCommandTestSuite) SetupTest() {
 	td.Provider = wizards.NewMockProvider()
-	td.Printer = io.NewMockPrinter()
+	td.Printer = utils.NewMockPrinter()
 
 	td.Patient = NewListCommand(td.Provider, td.Printer)
 }

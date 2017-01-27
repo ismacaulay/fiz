@@ -5,20 +5,20 @@ import (
 	"gopkg.in/stretchr/testify.v1/suite"
 	"testing"
 
-	"github.com/ismacaulay/fiz/io"
+	"github.com/ismacaulay/fiz/utils"
 )
 
 type CommandRunnerTestSuite struct {
 	suite.Suite
 
-	Printer *io.MockPrinter
+	Printer *utils.MockPrinter
 	Factory *MockFactory
 
 	Patient *CommandRunner
 }
 
 func (td *CommandRunnerTestSuite) SetupTest() {
-	td.Printer = io.NewMockPrinter()
+	td.Printer = utils.NewMockPrinter()
 	td.Factory = NewMockFactory()
 
 	td.Patient = NewCommandRunner(td.Printer, td.Factory)
