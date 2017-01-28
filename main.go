@@ -6,7 +6,7 @@ import (
 	"github.com/ismacaulay/fiz/app"
 )
 
-const VERSION = "0.0.1"
+const VERSION = "0.0.2"
 
 func main() {
 	external := app.NewExternal(VERSION)
