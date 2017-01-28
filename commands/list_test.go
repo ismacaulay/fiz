@@ -43,9 +43,9 @@ func (td *ListCommandTestSuite) TestNoWizardsFound() {
 
 	td.Provider.On("AllAvailableWizards").Return(wizards, nil)
 
-	td.Generator.On("Execute", HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
-	td.Generator.On("Execute", NO_WIZARDS_TMPL, nil).Return(bytes.NewBufferString(no_wizards), nil)
-	td.Generator.On("Execute", FOOTER_TMPL, nil).Return(bytes.NewBufferString(footer), nil)
+	td.Generator.On("Execute", LIST_HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
+	td.Generator.On("Execute", LIST_NO_WIZARDS_TMPL, nil).Return(bytes.NewBufferString(no_wizards), nil)
+	td.Generator.On("Execute", LIST_FOOTER_TMPL, nil).Return(bytes.NewBufferString(footer), nil)
 	td.Printer.On("Message", header)
 	td.Printer.On("Message", no_wizards)
 	td.Printer.On("Message", footer)
@@ -82,13 +82,13 @@ func (td *ListCommandTestSuite) TestPrintWizards() {
 
 	td.Provider.On("AllAvailableWizards").Return(w, nil)
 
-	td.Generator.On("Execute", HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
-	td.Generator.On("Execute", NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(none), nil)
-	td.Generator.On("Execute", GROUP_TMPL, "group one").Return(bytes.NewBufferString(group1), nil)
-	td.Generator.On("Execute", GROUP_WIZARD_TMPL, w["group one"]).Return(bytes.NewBufferString(group1_wizards), nil)
-	td.Generator.On("Execute", GROUP_TMPL, "group two").Return(bytes.NewBufferString(group2), nil)
-	td.Generator.On("Execute", GROUP_WIZARD_TMPL, w["group two"]).Return(bytes.NewBufferString(group2_wizards), nil)
-	td.Generator.On("Execute", FOOTER_TMPL, nil).Return(bytes.NewBufferString(footer), nil)
+	td.Generator.On("Execute", LIST_HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
+	td.Generator.On("Execute", LIST_NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(none), nil)
+	td.Generator.On("Execute", LIST_GROUP_TMPL, "group one").Return(bytes.NewBufferString(group1), nil)
+	td.Generator.On("Execute", LIST_GROUP_WIZARD_TMPL, w["group one"]).Return(bytes.NewBufferString(group1_wizards), nil)
+	td.Generator.On("Execute", LIST_GROUP_TMPL, "group two").Return(bytes.NewBufferString(group2), nil)
+	td.Generator.On("Execute", LIST_GROUP_WIZARD_TMPL, w["group two"]).Return(bytes.NewBufferString(group2_wizards), nil)
+	td.Generator.On("Execute", LIST_FOOTER_TMPL, nil).Return(bytes.NewBufferString(footer), nil)
 	td.Printer.On("Message", header)
 	td.Printer.On("Message", none)
 	td.Printer.On("Message", group1)
@@ -114,8 +114,8 @@ func (td *ListCommandTestSuite) TestErrorWhenExecuteErrorsOnNoneTemplate() {
 	header := "Header"
 
 	td.Provider.On("AllAvailableWizards").Return(w, nil)
-	td.Generator.On("Execute", HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
-	td.Generator.On("Execute", NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(""), expectedError)
+	td.Generator.On("Execute", LIST_HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
+	td.Generator.On("Execute", LIST_NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(""), expectedError)
 	td.Printer.On("Message", header)
 
 	err := td.Patient.Run()
@@ -140,9 +140,9 @@ func (td *ListCommandTestSuite) TestErrorWhenExecuteErrorsOnGroupTemplate() {
 
 	td.Provider.On("AllAvailableWizards").Return(w, nil)
 
-	td.Generator.On("Execute", HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
-	td.Generator.On("Execute", NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(none), nil)
-	td.Generator.On("Execute", GROUP_TMPL, "group one").Return(bytes.NewBufferString(group1), expectedError)
+	td.Generator.On("Execute", LIST_HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
+	td.Generator.On("Execute", LIST_NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(none), nil)
+	td.Generator.On("Execute", LIST_GROUP_TMPL, "group one").Return(bytes.NewBufferString(group1), expectedError)
 	td.Printer.On("Message", header)
 	td.Printer.On("Message", none)
 	td.Printer.On("Message", group1)
@@ -169,10 +169,10 @@ func (td *ListCommandTestSuite) TestErrorWhenExecuteErrorsOnGroupWizardsTemplate
 
 	td.Provider.On("AllAvailableWizards").Return(w, nil)
 
-	td.Generator.On("Execute", HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
-	td.Generator.On("Execute", NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(none), nil)
-	td.Generator.On("Execute", GROUP_TMPL, "group one").Return(bytes.NewBufferString(group1), nil)
-	td.Generator.On("Execute", GROUP_WIZARD_TMPL, w["group one"]).Return(bytes.NewBufferString(""), expectedError)
+	td.Generator.On("Execute", LIST_HEADER_TMPL, nil).Return(bytes.NewBufferString(header), nil)
+	td.Generator.On("Execute", LIST_NONE_GROUP_TMPL, w["none"]).Return(bytes.NewBufferString(none), nil)
+	td.Generator.On("Execute", LIST_GROUP_TMPL, "group one").Return(bytes.NewBufferString(group1), nil)
+	td.Generator.On("Execute", LIST_GROUP_WIZARD_TMPL, w["group one"]).Return(bytes.NewBufferString(""), expectedError)
 	td.Printer.On("Message", header)
 	td.Printer.On("Message", none)
 	td.Printer.On("Message", group1)

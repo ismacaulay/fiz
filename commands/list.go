@@ -16,55 +16,55 @@ func NewListCommand(provider wizards.Provider, generator utils.TemplateGenerator
 }
 
 const (
-	HEADER_TMPL = "Available Wizards:"
+	LIST_HEADER_TMPL = "Available Wizards:"
 
-	GROUP_TMPL = `
+	LIST_GROUP_TMPL = `
     {{ . }}:`
 
-	NONE_GROUP_TMPL = `
+	LIST_NONE_GROUP_TMPL = `
 {{- range $index, $wizard := . }}
     - {{ $wizard.Name }}
 {{- end -}}
 `
 
-	GROUP_WIZARD_TMPL = `
+	LIST_GROUP_WIZARD_TMPL = `
 {{- range $index, $wizard := . }}
         - {{ $wizard.Name }}
 {{- end -}}
 `
-	NO_WIZARDS_TMPL = `
+	LIST_NO_WIZARDS_TMPL = `
     No wizards available`
 
-	FOOTER_TMPL = "\n"
+	LIST_FOOTER_TMPL = "\n"
 )
 
 func (c *ListCommand) Run() error {
 	wizards, _ := c.provider.AllAvailableWizards()
 
-	c.printTemplate(HEADER_TMPL, nil)
+	c.printTemplate(LIST_HEADER_TMPL, nil)
 
 	if len(wizards) == 0 {
-		c.printTemplate(NO_WIZARDS_TMPL, nil)
+		c.printTemplate(LIST_NO_WIZARDS_TMPL, nil)
 	} else {
 		if list, ok := wizards[utils.NONE_GROUP]; ok {
-			if err := c.printTemplate(NONE_GROUP_TMPL, list); err != nil {
+			if err := c.printTemplate(LIST_NONE_GROUP_TMPL, list); err != nil {
 				return err
 			}
 		}
 
 		delete(wizards, utils.NONE_GROUP)
 		for group, list := range wizards {
-			if err := c.printTemplate(GROUP_TMPL, group); err != nil {
+			if err := c.printTemplate(LIST_GROUP_TMPL, group); err != nil {
 				return err
 			}
 
-			if err := c.printTemplate(GROUP_WIZARD_TMPL, list); err != nil {
+			if err := c.printTemplate(LIST_GROUP_WIZARD_TMPL, list); err != nil {
 				return err
 			}
 		}
 	}
 
-	c.printTemplate(FOOTER_TMPL, nil)
+	c.printTemplate(LIST_FOOTER_TMPL, nil)
 	return nil
 }
 
