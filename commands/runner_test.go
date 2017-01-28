@@ -18,6 +18,10 @@ type CommandRunnerTestSuite struct {
 }
 
 func (td *CommandRunnerTestSuite) SetupTest() {
+	td.beforeEachCase()
+}
+
+func (td *CommandRunnerTestSuite) beforeEachCase() {
 	td.Printer = utils.NewMockPrinter()
 	td.Factory = NewMockFactory()
 
@@ -41,20 +45,47 @@ func (td *CommandRunnerTestSuite) TestCreateAndRunListCommand() {
 		{"-l"},
 	}
 
-	command := NewMockCommand()
-	td.Factory.On("CreateListCmd").Return(command).Twice()
-	command.On("Run").Return(nil).Twice()
-
 	for _, c := range cases {
+		td.beforeEachCase()
+
+		command := NewMockCommand()
+		td.Factory.On("CreateListCmd").Return(command)
+		command.On("Run").Return(nil)
+
 		args := make([]string, 1)
 		args[0] = c.arg
 
 		td.Patient.Run(args)
+
+		td.Factory.AssertExpectations(td.Suite.T())
+		command.AssertExpectations(td.Suite.T())
 	}
 
-	td.Factory.AssertExpectations(td.Suite.T())
-	command.AssertExpectations(td.Suite.T())
+}
 
+func (td *CommandRunnerTestSuite) TestCreateAndRunConfigCommand() {
+	var cases = []struct {
+		arg string
+	}{
+		{"config"},
+		{"--config"},
+	}
+
+	for _, c := range cases {
+		td.beforeEachCase()
+
+		command := NewMockCommand()
+		td.Factory.On("CreateConfigCmd").Return(command)
+		command.On("Run").Return(nil)
+
+		args := make([]string, 1)
+		args[0] = c.arg
+
+		td.Patient.Run(args)
+
+		td.Factory.AssertExpectations(td.Suite.T())
+		command.AssertExpectations(td.Suite.T())
+	}
 }
 
 func (td *CommandRunnerTestSuite) TestHelpCommandPrintsHelp() {

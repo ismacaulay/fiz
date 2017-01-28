@@ -28,6 +28,9 @@ func (r *CommandRunner) Run(commands []string) {
 	case "list", "-l":
 		cmd := r.factory.CreateListCmd()
 		cmd.Run()
+	case "config", "--config":
+		cmd := r.factory.CreateConfigCmd()
+		cmd.Run()
 	case "help", "-h", "--help":
 		r.printer.Help()
 	case "version", "--version":

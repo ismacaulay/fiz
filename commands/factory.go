@@ -10,18 +10,20 @@ import (
 type Factory interface {
 	CreateListCmd() Command
 	CreateWizardCmd(commands []string) Command
+	CreateConfigCmd() Command
 }
 
 type CmdFactory struct {
 	provider  wizards.Provider
 	loader    wizards.Loader
+	directory utils.DirectoryProvider
 	generator utils.TemplateGenerator
 	printer   utils.Printer
 }
 
 func NewCmdFactory(provider wizards.Provider, loader wizards.Loader,
-	generator utils.TemplateGenerator, printer utils.Printer) *CmdFactory {
-	return &CmdFactory{provider, loader, generator, printer}
+	directory utils.DirectoryProvider, generator utils.TemplateGenerator, printer utils.Printer) *CmdFactory {
+	return &CmdFactory{provider, loader, directory, generator, printer}
 }
 
 func (f *CmdFactory) CreateListCmd() Command {
@@ -30,6 +32,10 @@ func (f *CmdFactory) CreateListCmd() Command {
 
 func (f *CmdFactory) CreateWizardCmd(commands []string) Command {
 	return NewWizardCommand(f.loader, commands)
+}
+
+func (f *CmdFactory) CreateConfigCmd() Command {
+	return NewConfigCommand(f.directory, f.generator, f.printer)
 }
 
 /************************************
@@ -50,5 +56,10 @@ func (m *MockFactory) CreateListCmd() Command {
 
 func (m *MockFactory) CreateWizardCmd(cmds []string) Command {
 	args := m.Called(cmds)
+	return args.Get(0).(Command)
+}
+
+func (m *MockFactory) CreateConfigCmd() Command {
+	args := m.Called()
 	return args.Get(0).(Command)
 }

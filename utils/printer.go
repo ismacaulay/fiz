@@ -50,14 +50,7 @@ func (p *TextPrinter) Error(err error) {
 }
 
 func (p *TextPrinter) Commands() {
-	commands := `Commands:
-	list, -l		list all wizards
-	<wizard>		run wizard
-	<group> <wizard>	run wizard in group
-	version, --version	print the version
-	help, -h, --help	print this help message
-`
-	p.Message(commands)
+	p.Message(COMMANDS_MSG)
 }
 
 /************************************
