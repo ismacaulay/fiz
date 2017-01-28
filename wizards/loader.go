@@ -58,7 +58,6 @@ func (l *WizardLoader) Load(commands []string) (Wizard, error) {
 func invalidCommandError(commands []string) error {
 	msg := "Invalid command: "
 	msg += strings.Join(commands[:], " ")
-	msg += "\n\n"
 	return errors.New(msg)
 }
 

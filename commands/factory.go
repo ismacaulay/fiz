@@ -13,17 +13,19 @@ type Factory interface {
 }
 
 type CmdFactory struct {
-	provider wizards.Provider
-	loader   wizards.Loader
-	printer  utils.Printer
+	provider  wizards.Provider
+	loader    wizards.Loader
+	generator utils.TemplateGenerator
+	printer   utils.Printer
 }
 
-func NewCmdFactory(provider wizards.Provider, loader wizards.Loader, printer utils.Printer) *CmdFactory {
-	return &CmdFactory{provider, loader, printer}
+func NewCmdFactory(provider wizards.Provider, loader wizards.Loader,
+	generator utils.TemplateGenerator, printer utils.Printer) *CmdFactory {
+	return &CmdFactory{provider, loader, generator, printer}
 }
 
 func (f *CmdFactory) CreateListCmd() Command {
-	return NewListCommand(f.provider, f.printer)
+	return NewListCommand(f.provider, f.generator, f.printer)
 }
 
 func (f *CmdFactory) CreateWizardCmd(commands []string) Command {

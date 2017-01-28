@@ -3,18 +3,16 @@ package commands
 import (
 	"github.com/ismacaulay/fiz/utils"
 	"github.com/ismacaulay/fiz/wizards"
-
-	"bytes"
-	"text/template"
 )
 
 type ListCommand struct {
-	provider wizards.Provider
-	printer  utils.Printer
+	provider  wizards.Provider
+	generator utils.TemplateGenerator
+	printer   utils.Printer
 }
 
-func NewListCommand(provider wizards.Provider, printer utils.Printer) *ListCommand {
-	return &ListCommand{provider, printer}
+func NewListCommand(provider wizards.Provider, generator utils.TemplateGenerator, printer utils.Printer) *ListCommand {
+	return &ListCommand{provider, generator, printer}
 }
 
 const (
@@ -34,42 +32,45 @@ const (
         - {{ $wizard.Name }}
 {{- end -}}
 `
+	NO_WIZARDS_TMPL = `
+    No wizards available`
+
+	FOOTER_TMPL = "\n"
 )
 
 func (c *ListCommand) Run() error {
 	wizards, _ := c.provider.AllAvailableWizards()
 
-	c.printTemplate(nil, HEADER_TMPL)
+	c.printTemplate(HEADER_TMPL, nil)
 
-	if list, ok := wizards[utils.NONE_GROUP]; ok {
-		if err := c.printTemplate(list, NONE_GROUP_TMPL); err != nil {
-			return err
+	if len(wizards) == 0 {
+		c.printTemplate(NO_WIZARDS_TMPL, nil)
+	} else {
+		if list, ok := wizards[utils.NONE_GROUP]; ok {
+			if err := c.printTemplate(NONE_GROUP_TMPL, list); err != nil {
+				return err
+			}
+		}
+
+		delete(wizards, utils.NONE_GROUP)
+		for group, list := range wizards {
+			if err := c.printTemplate(GROUP_TMPL, group); err != nil {
+				return err
+			}
+
+			if err := c.printTemplate(GROUP_WIZARD_TMPL, list); err != nil {
+				return err
+			}
 		}
 	}
 
-	delete(wizards, utils.NONE_GROUP)
-	for group, list := range wizards {
-		if err := c.printTemplate(group, GROUP_TMPL); err != nil {
-			return err
-		}
-
-		if err := c.printTemplate(list, GROUP_WIZARD_TMPL); err != nil {
-			return err
-		}
-	}
-
-	c.printer.Message("\n\n")
+	c.printTemplate(FOOTER_TMPL, nil)
 	return nil
 }
 
-func (c *ListCommand) printTemplate(data interface{}, tmpl string) error {
-	buf := new(bytes.Buffer)
-	output, err := template.New("template").Parse(tmpl)
+func (c *ListCommand) printTemplate(tmpl string, data interface{}) error {
+	buf, err := c.generator.Execute(tmpl, data)
 	if err != nil {
-		return err
-	}
-
-	if err := output.Execute(buf, data); err != nil {
 		return err
 	}
 

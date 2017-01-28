@@ -19,7 +19,7 @@ func NewApp(external External) *Application {
 	provider := wizards.NewWizardProvider(external.FileSystem(), external.DirectoryProvider())
 	loader := wizards.NewWizardLoader(provider, factory, external.FileSystem())
 
-	cmdFactory := commands.NewCmdFactory(provider, loader, external.Printer())
+	cmdFactory := commands.NewCmdFactory(provider, loader, external.TemplateGenerator(), external.Printer())
 	runner := commands.NewCommandRunner(external.Printer(), cmdFactory)
 
 	return &Application{runner}

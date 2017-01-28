@@ -127,7 +127,7 @@ func (p *WizardProcessor) replaceVars(s string, vars map[string]interface{}) (st
 			case string:
 				s = s[:lIndex] + value.(string) + s[rIndex+1:]
 			default:
-				return s, errors.New(fmt.Sprint("Could not use variable:", variable, "since it is not a string"))
+				return s, errors.New(fmt.Sprint("Could not use variable: ", variable, " since it is not a string"))
 			}
 		} else {
 			break

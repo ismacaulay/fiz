@@ -80,7 +80,7 @@ func (td *WizardProcessorTestSuite) TestReplaceVars() {
 				"Name3": "!",
 			},
 			"HelloWorld!",
-			errors.New("Could not use variable: Name2"),
+			errors.New("Could not use variable: Name2 since it is not a string"),
 		},
 	}
 
@@ -93,7 +93,7 @@ func (td *WizardProcessorTestSuite) TestReplaceVars() {
 			assert.NoError(err, c.name)
 			assert.Equal(c.result, result, c.name)
 		} else {
-			assert.Error(err, c.name)
+			assert.Equal(err, c.err, c.name)
 		}
 	}
 }
